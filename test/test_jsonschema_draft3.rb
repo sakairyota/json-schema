@@ -193,6 +193,32 @@ class JSONSchemaDraft3Test < Test::Unit::TestCase
   end
   
   
+  def test_required
+    # Set up the default datatype
+    schema = {
+      "$schema" => "http://json-schema.org/draft-03/schema#",
+      "properties" => {
+        "a" => {"type" => "integer"},
+	"b" => {"type" => "integer"}
+      },
+      "dependencies" => {
+        "a" => "b"
+      }
+    }
+
+    data = {
+      "a" => 1,
+      "b" => 2
+    }
+    assert(JSON::Validator.validate(schema,data))
+
+    data = {"b" => 2}
+    assert(JSON::Validator.validate(schema,data))
+
+    data = {"a" => 2}
+    assert(!JSON::Validator.validate(schema,data))
+
+  end
   
   def test_minimum
     # Set up the default datatype
